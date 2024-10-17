@@ -1,19 +1,51 @@
 import Header from "@/Components/Header.jsx";
+import {useEffect, useState} from "react";
 
 export default function Board() {
-    // Define hyperlinks for each grid cell
-    const items = [
-        { link: 'https://example.com/1', color: '#4CAF50', title: 'Go to Page 1' },
-        { link: '', color: '#f44336', title: 'Edit Item 2' },
-        { link: 'https://example.com/3', color: '#2196F3', title: 'Go to Page 3' },
-        { link: '', color: '#FF9800', title: 'Edit Item 4' },
-        { link: 'https://example.com/5', color: '#9C27B0', title: 'Go to Page 5' },
-        { link: 'https://example.com/6', color: '#00BCD4', title: 'Go to Page 6' },
-        { link: '', color: '#FFEB3B', title: 'Edit Item 7' },
-        { link: 'https://example.com/8', color: '#673AB7', title: 'Go to Page 8' },
-        { link: 'https://example.com/9', color: '#795548', title: 'Go to Page 9' },
-    ];
+    const [items, setItems] = useState([]);
 
+    useEffect(() => {
+        // Fetch buttons from the backend
+        const fetchButtons = async () => {
+            try {
+                const response = await fetch('/api/getButtons'); // Adjust the API route if necessary
+                const data = await response.json();
+                setItems(data);
+            } catch (error) {
+                console.error('Error fetching buttons:', error);
+            }
+        };
+
+        fetchButtons();
+    }, []);
+
+    const handleDelete = async (index) => {
+        if (!window.confirm("Are you sure you want to delete this item?")) {
+            return; // Exit if the user cancels the deletion
+        }
+
+        try {
+            const response = await fetch('/api/deleteButton', {
+                method: 'POST', // Since you're using POST for deletion
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ index: index }), // Send the index as the id to the backend
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Delete Success:', result);
+                // Optionally refresh the data or update the UI after deletion
+                window.location.reload(); // Reload the current page
+            } else {
+                console.error('Error:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
     return (
         <>
             <Header/>
@@ -35,19 +67,32 @@ export default function Board() {
                         >
                             {item.title}
                         </button>
-                        {/* Delete button */}
-                        <button
+                        {/* Conditionally render the edit button if the item.link is not empty */}
+                        {item.link !== '' && (
+                            <>
+                            <button
+                                className="edit-button"
+                                onClick={() => {
+                                    window.location.href = `/edit/${item.id}`;
+                                }}
+                            >
+                                Edit
+                            </button>
+                            <button
                             className="delete-button"
-                            onClick={() => {
-                                window.location.href = `/delete/${index}`;
-                            }}
-                        >
-                            Delete
-                        </button>
-                    </div>
-                ))}
-            </div>
+                            onClick={() => handleDelete(item.id)} // Pass the index to the delete handler
+                    >
+                        Delete
+                    </button>
+                            </>
+                )}
+                {/* Delete button */}
 
-        </>
-    );
+            </div>
+            ))}
+        </div>
+
+</>
+)
+    ;
 }

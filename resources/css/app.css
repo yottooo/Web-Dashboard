@@ -88,3 +88,19 @@ form button[type="submit"]:hover {
 .delete-button:hover {
     color: darkred;
 }
+
+.edit-button {
+    position: absolute;
+    bottom: 5px;
+    left: 5px; /* Position at the bottom-left */
+    background: none;
+    border: none;
+    color: blue; /* Make the text blue */
+    text-decoration: underline;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.edit-button:hover {
+    color: darkblue; /* Change color on hover */
+}

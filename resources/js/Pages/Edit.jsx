@@ -1,35 +1,65 @@
 import React, { useState } from 'react';
 import Header from "@/Components/Header.jsx";
-
-export default function Edit() {
+import { useParams } from 'react-router-dom';
+export default function Edit({ item }) {
     // Define state for the form fields
-    const [title, setTitle] = useState('');
-    const [link, setLink] = useState('');
-    const [color, setColor] = useState('');
+    const { index } = useParams(); // Get the index from the URL
+    const [title, setTitle] = useState(item ? item.title : '');
+    const [link, setLink] = useState(item ? item.link : '');
+    const [color, setColor] = useState(item ? item.color : '');
 
     // Handle form submission (you can add functionality as needed)
-    // TODO on submit trigger the save route
-    const handleSubmit = (e) => {
+    const handleSubmit =  (e) => {
         e.preventDefault();
+        // Create a data object to send to the backend
+        const data = {
+            title,
+            link,
+            color,
+            index
+        };
 
-        // Log the form values (or handle them in your app)
-        console.log('Title:', title);
-        console.log('Link:', link);
-        console.log('Color:', color);
+        console.log('============data===================')
+        console.log(data);
+        try {
+            const response =  fetch('/api/saveButton', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
 
-        // Reset form fields after submission (optional)
-        setTitle('');
-        setLink('');
-        setColor('');
+            if (response.ok) {
+                const result = response.json();
+                console.log('Success:', result);
+                // Optionally, show a success message or handle further logic
+
+                // Reset form fields after submission
+                setTitle('');
+                setLink('');
+                setColor('');
+
+                window.location.href = '/board'; // Redirect after successful save
+            } else {
+                console.error('Error:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     return (
         <>
             <Header />
-
+            <a href="/board" style={{ textDecoration: 'none', color: 'inherit', }}>
+                Back to Home
+            </a>
             <div className="form-container">
-                {/*TODO add index number to edit item*/}
-                <h2>Edit Item </h2>
+
+                <h2>Edit Item {index}</h2>
+                <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
