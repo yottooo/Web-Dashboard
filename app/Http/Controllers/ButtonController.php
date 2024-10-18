@@ -67,7 +67,7 @@ class ButtonController extends Controller {
             'title' => 'required|string|max:255',
             'link' => 'nullable|url',
             'color' => 'required|string|max:7', // color input is a hex value
-            'index' => 'nullable|integer|exists:buttons,id', // Validate that index is an integer and optionally exists in the buttons table
+            'index' => 'nullable|integer', // Validate that index is an integer and optionally exists in the buttons table
         ]);
         // Mass assignment if fillable is defined in Button model
         $button = Button::updateOrCreate(

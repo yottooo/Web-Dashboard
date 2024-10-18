@@ -2,7 +2,7 @@ A little project I made while learning Laravel and React.
 
 ## To Run
 
-You need to have docker installed after that:
+composer
 
 -sail up -d
 

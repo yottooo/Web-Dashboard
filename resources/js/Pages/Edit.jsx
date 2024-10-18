@@ -4,7 +4,7 @@ import Header from "@/Components/Header.jsx";
 export default function Edit({ item }) {
     // Define state for the form fields
     const path = window.location.pathname;
-    const index = path.substring(path.lastIndexOf('/') + 1); // Get the last segment of the URL
+    const index = parseInt(path.substring(path.lastIndexOf('/') + 1)); // Get the last segment of the URL
     const [title, setTitle] = useState(item ? item.title : '');
     const [link, setLink] = useState(item ? item.link : '');
     const [color, setColor] = useState(item ? item.color : '');
