@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import Header from "@/Components/Header.jsx";
-import { useParams } from 'react-router-dom';
+
 export default function Edit({ item }) {
     // Define state for the form fields
-    const { index } = useParams(); // Get the index from the URL
+    const path = window.location.pathname;
+    const index = path.substring(path.lastIndexOf('/') + 1); // Get the last segment of the URL
     const [title, setTitle] = useState(item ? item.title : '');
     const [link, setLink] = useState(item ? item.link : '');
     const [color, setColor] = useState(item ? item.color : '');
 
+
     // Handle form submission (you can add functionality as needed)
-    const handleSubmit =  (e) => {
+    const handleSubmit =  async (e) => {
         e.preventDefault();
         // Create a data object to send to the backend
         const data = {
@@ -22,7 +24,7 @@ export default function Edit({ item }) {
         console.log('============data===================')
         console.log(data);
         try {
-            const response =  fetch('/api/saveButton', {
+            const response = await fetch('/api/saveButton', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
